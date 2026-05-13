@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
 
     private void SetupPool()
     {
-        ObjectPooler.SetupPool(bulletPrefab, 5, "Bullet");
+        // Initiate the object pooler, with the second parameter determining
+        // how many objects to pre-instantiate (Reccomended: 1000)
+        ObjectPooler.SetupPool(bulletPrefab, 500, "Bullet");
     }
 }

@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class BulletController : MonoBehaviour
 {
-    float speed = 5f;
-    float lifetime = 2f;
+    [SerializeField] public float speed = 5f;
+    [SerializeField] public float lifetime = 5f;
+    private float lifespan;
+
     public Vector3 mousePosition;
     public void Initialise()
     {
@@ -20,18 +22,27 @@ public class BulletController : MonoBehaviour
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
-        lifetime = 2f;
+        lifespan = lifetime;
     }
 
 
     private void Update()
     {
 
-        lifetime -= Time.deltaTime;
+        lifespan -= Time.deltaTime;
 
-        if (lifetime <= 0f)
+        if (lifespan <= 0f)
         {
             ObjectPooler.EnqueueObject(this, "Bullet");
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            other.gameObject.GetComponent<EnemyController>().health -= 1;
+            Destroy(gameObject);
         }
     }
 }

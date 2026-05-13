@@ -15,14 +15,6 @@ public static class ObjectPooler
         // Reset transform and other properties
         item.transform.position = Vector2.zero;
 
-        // Reset physics state if present
-        //var rb = item.GetComponent<Rigidbody2D>();
-        //if (rb != null)
-        //{
-        //    rb.linearVelocity = Vector2.zero;
-        //    rb.angularVelocity = 0f;
-        //}
-
         if (!poolDictionary.ContainsKey(name))
         {
             poolDictionary.Add(name, new Queue<Component>());

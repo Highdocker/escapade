@@ -6,7 +6,7 @@ public class PlayerRotation : MonoBehaviour
     [SerializeField] public float rotateSpeed;
     [SerializeField] public float additionalRotationSpeed;
 
-    public float rotationDeterminer = 0f;
+    private float rotationDeterminer = 0f;
 
     void processInputs()
     {
