@@ -3,7 +3,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     // Contains the reference to a bullet prefab
-    public BulletController bulletPrefab;
+    public PlayerBulletController bulletPrefab;
 
     private void Awake()
     {

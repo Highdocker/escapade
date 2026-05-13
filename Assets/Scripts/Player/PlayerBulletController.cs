@@ -1,22 +1,27 @@
 using UnityEngine;
 
-public class BulletController : MonoBehaviour
+public class PlayerBulletController : MonoBehaviour
 {
     [SerializeField] public float speed = 5f;
     [SerializeField] public float lifetime = 5f;
+    [SerializeField] public float damage = 1f;
+
     private float lifespan;
+    private Vector2 _velocity;
 
     public Vector3 mousePosition;
+
     public void Initialise()
     {
-        // Get mouse position in world space
+        // Make sure z is ZERO
         mousePosition.z = 0f;
 
         // Calculates direction from current position to mouse position
-        Vector3 direction = (mousePosition - transform.position).normalized;
+        Vector3 direction3 = (mousePosition - transform.position).normalized;
+        Vector2 direction = new Vector2(direction3.x, direction3.y);
 
-        // Move component towards cursor location
-        GetComponent<Rigidbody2D>().linearVelocity = direction * speed;
+        // Compute movement velocity
+        _velocity = direction * speed;
 
         // Rotates object to face the direction of movement
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
@@ -28,11 +33,14 @@ public class BulletController : MonoBehaviour
 
     private void Update()
     {
+        // Move the bullet
+        transform.position += (Vector3)_velocity * Time.deltaTime;
 
         lifespan -= Time.deltaTime;
 
         if (lifespan <= 0f)
         {
+            // Return the bullet to the object pool instead of destroying it
             ObjectPooler.EnqueueObject(this, "Bullet");
         }
     }
@@ -41,7 +49,8 @@ public class BulletController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
-            other.gameObject.GetComponent<EnemyController>().health -= 1;
+            var enemy = other.gameObject.GetComponent<EnemyController>();
+            enemy.health -= damage;
             Destroy(gameObject);
         }
     }

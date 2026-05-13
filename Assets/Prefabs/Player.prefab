@@ -105,7 +105,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3913066647025155288}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -149,7 +149,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bf03444ddc11df4b9a5bd584dd7cea6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerShooting
-  rateOfFire: 10
   bullet: {fileID: 2266775908074781784, guid: 3083918275aa00047898842a89f0bc3c, type: 3}
 --- !u!61 &4101787750234724050
 BoxCollider2D:

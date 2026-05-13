@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerShooting : MonoBehaviour
 {
-    [SerializeField] public BulletController bullet;
+    [SerializeField] public PlayerBulletController bullet;
 
     // Variables for determining firerate, and when you can shoot
     private float rateOfFire = 1;
@@ -29,7 +29,7 @@ public class PlayerShooting : MonoBehaviour
         // If player inputs to shoot, and is allowed to shoot, then shoot a bullet
         if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.Mouse0)) && canShoot)
         {
-            BulletController instance = ObjectPooler.DequeueObject<BulletController>("Bullet");
+            PlayerBulletController instance = ObjectPooler.DequeueObject<PlayerBulletController>("Bullet");
 
             instance.transform.position = transform.position;
             Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
