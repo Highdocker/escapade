@@ -11,19 +11,21 @@ public class BulletSpawner : MonoBehaviour
     [HideInInspector] public float timer;
     [SerializeField] public float bulletSpeed;
     [SerializeField] public Vector2 bulletVelocity;
+    [SerializeField] public float spawnedBulletLifetime = 20f;
 
     float[] rotations;
+    private const string EnemyBulletPoolKey = "EnemyBullet";
 
     private void Start()
     {
         timer = cooldown;
-        rotations = new float[numBullets];
+        rotations = new float[Mathf.Max(1, numBullets)];
 
-        // Exclusively for random bullet patterns
         if (!isRandom)
-        {
             DistributedRotations();
-        }
+
+        if (bulletPrefab == null)
+            Debug.LogWarning("BulletSpawner: bulletPrefab not assigned.");
     }
 
     void Update()
@@ -36,44 +38,49 @@ public class BulletSpawner : MonoBehaviour
         timer -= Time.deltaTime;
     }
 
-    // Returns an array of random rotations between the min and max rotation values
     public float[] RandomRotations()
     {
         for (int i = 0; i < numBullets; i++)
-        {
             rotations[i] = Random.Range(minRotation, maxrotation);
-        }
         return rotations;
     }
+
     public float[] DistributedRotations()
     {
         for (int i = 0; i < numBullets; i++)
         {
             var fraction = (float)i / ((float)numBullets - 1);
             var difference = maxrotation - minRotation;
-            var fractionOfDifference = fraction * difference;
-            rotations[i] = minRotation + fractionOfDifference;
+            rotations[i] = minRotation + fraction * difference;
         }
-        foreach (var r in rotations) print(r);
         return rotations;
     }
 
     public GameObject[] SpawnBullets()
     {
-        if (isRandom)
-        {
-            RandomRotations();
-        }
+        if (isRandom) RandomRotations();
 
         GameObject[] spawnedBullets = new GameObject[numBullets];
+
         for (int i = 0; i < numBullets; i++)
         {
-            spawnedBullets[i] = Instantiate(bulletPrefab, transform);
-            var b = spawnedBullets[i].GetComponent<EnemyBullet>();
-            b.rotation = rotations[i];
-            b.speed = bulletSpeed;
-            b.velocity = bulletVelocity;
+            EnemyBullet instance = null;
+
+            // Try get from pool
+            instance = ObjectPooler.DequeueObject<EnemyBullet>(EnemyBulletPoolKey);
+
+            // Configure the bullet instance BEFORE activating
+            instance.transform.position = transform.position;
+
+            // Use the new Initialize method to set all runtime state and apply rotation on the transform
+            instance.Initialize(rotations[i], bulletSpeed, bulletVelocity, spawnedBulletLifetime);
+
+            // Activate after configuration
+            instance.gameObject.SetActive(true);
+
+            spawnedBullets[i] = instance.gameObject;
         }
+
         return spawnedBullets;
     }
 }
