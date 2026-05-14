@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3774990172245522138}
   - component: {fileID: 2377068626549754779}
   - component: {fileID: 8888280054949692425}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: medium bullet
   m_TagString: EnemyBullet
   m_Icon: {fileID: 0}
@@ -109,6 +109,9 @@ MonoBehaviour:
   rotation: 0
   damage: 1
   velocity: {x: 0, y: 0}
+  explodeOnDeath: 1
+  childSpawner: {fileID: 2200682468864009014, guid: 159d1e2bee30f6f4c9268f99a7476671, type: 3}
+  lifetime: 20
 --- !u!58 &8888280054949692425
 CircleCollider2D:
   m_ObjectHideFlags: 0

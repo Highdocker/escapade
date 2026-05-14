@@ -7,6 +7,10 @@ public class EnemyBullet : MonoBehaviour
     [SerializeField] public float damage;
     [SerializeField] public Vector2 velocity;
 
+    [Header("Bullets Explode")]
+    [SerializeField] bool explodeOnDeath;
+    [SerializeField] public GameObject childSpawner;
+
     // Might be temporary, can be removed if map boundaries are added
     [SerializeField] public float lifetime = 20f;
     private float remainingLifetime;
@@ -16,7 +20,7 @@ public class EnemyBullet : MonoBehaviour
         // Ensure lifetime is reset when enabled; rotation is applied in Initialize
         remainingLifetime = lifetime;
     }
-
+        
     public void Initialize(float rotationDeg, float speedValue, Vector2 velocityValue, float lifetimeValue)
     {
         rotation = rotationDeg;
@@ -46,12 +50,18 @@ public class EnemyBullet : MonoBehaviour
         remainingLifetime -= Time.deltaTime;
         if (remainingLifetime <= 0f)
         {
+            // If configured, create a temporary BulletSpawner at this bullet's position
+            if (explodeOnDeath)
+            {
+                var go = Instantiate(childSpawner, transform.position, Quaternion.identity);
+                var sp = go.GetComponent<BulletSpawner>();
+            }
             ObjectPooler.EnqueueObject(this, "EnemyBullet");
         }
     }
     private void OnDisable()
     {
-        // Clean up states so they aren't carried over when the bullet is reused
+        // Clean up states so they arent carried over when the bullet is reused
         velocity = Vector2.zero;
         speed = 0f;
     }

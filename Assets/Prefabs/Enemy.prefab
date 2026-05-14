@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1723725534801048068}
   - component: {fileID: 2106309216579444290}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Enemy Ring
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 7805221549568969433}
   - component: {fileID: 4774062384413357369}
   - component: {fileID: -1367475846088781126}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}

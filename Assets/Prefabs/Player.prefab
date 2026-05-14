@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7620163053679213063}
   - component: {fileID: 4101787750234724050}
   - component: {fileID: -19589377740161619}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -223,7 +223,7 @@ GameObject:
   - component: {fileID: 7682133816990014214}
   - component: {fileID: 2740016643600507133}
   - component: {fileID: 5261014253127872027}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player Ring
   m_TagString: Untagged
   m_Icon: {fileID: 0}
