@@ -47,6 +47,14 @@ public static class ObjectPooler
         T newInstance = Object.Instantiate(item);
         newInstance.gameObject.SetActive(false);
         newInstance.transform.position = Vector2.zero;
+
+        // Try to set pooledKey on known bullet types so they return to the right queue
+        var eb = newInstance.GetComponent<EnemyBullet>();
+        if (eb != null)
+        {
+            eb.pooledKey = key;
+        }
+
         // Do not enqueue the new instance here. Caller will activate and use it.
         return newInstance;
     }
@@ -64,6 +72,14 @@ public static class ObjectPooler
             T pooledInstance = Object.Instantiate(pooledItemPrefab);
             pooledInstance.gameObject.SetActive(false);
             pooledInstance.transform.position = Vector2.zero;
+
+            // If this prefab has an EnemyBullet, set its pooledKey so instances return correctly
+            var eb = pooledInstance.GetComponent<EnemyBullet>();
+            if (eb != null)
+            {
+                eb.pooledKey = dictionaryEntry;
+            }
+
             poolDictionary[dictionaryEntry].Enqueue(pooledInstance);
         }
     }

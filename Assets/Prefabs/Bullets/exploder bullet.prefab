@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2377068626549754779}
   - component: {fileID: 8888280054949692425}
   m_Layer: 8
-  m_Name: medium bullet
+  m_Name: exploder bullet
   m_TagString: EnemyBullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 899749387269151764, guid: f1791107e050a9743ab57b582d6be0cf, type: 3}
+  m_Sprite: {fileID: 1312450869453737617, guid: e3c8d7488224a6f47bf6fb39cee0834d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -109,7 +109,7 @@ MonoBehaviour:
   rotation: 0
   damage: 1
   velocity: {x: 0, y: 0}
-  explodeOnDeath: 0
+  explodeOnDeath: 1
   childSpawner: {fileID: 2200682468864009014, guid: 159d1e2bee30f6f4c9268f99a7476671, type: 3}
   lifetime: 20
 --- !u!58 &8888280054949692425

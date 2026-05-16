@@ -47,11 +47,11 @@ MonoBehaviour:
   bulletPrefab: {fileID: 6711018668733676868, guid: d156b93973042c949a25ffd34ef72bd8, type: 3}
   minRotation: 0
   maxrotation: 360
-  numBullets: 8
+  numBullets: 16
   isRandom: 0
   cooldown: 1
   timer: 0
-  bulletSpeed: 2
+  bulletSpeed: 2.5
   bulletVelocity: {x: 1, y: 0}
   spawnedBulletLifetime: 2
   burstCount: 0
@@ -62,3 +62,4 @@ MonoBehaviour:
   rotationTimer: 0
   explodeOnDeath: 1
   deleteSpawnerTime: 0.01
+  poolKey: EnemyBullet

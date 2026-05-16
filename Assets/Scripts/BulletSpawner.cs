@@ -26,13 +26,18 @@ public class BulletSpawner : MonoBehaviour
     [SerializeField] public float rotationSpeed;
     [HideInInspector] public float rotationTimer;
 
+    // Used commonly for children bullets.
+    // Essentially means when checked, the spawner/script will delete itself in X seconds.
     [Header("Explode")]
     [SerializeField] bool explodeOnDeath;
     [SerializeField] float deleteSpawnerTime;
     [HideInInspector] float deletionTimer;
 
+    // Pool key to use for this spawner. Set in inspector per spawner.
+    [Header("Pooling")]
+    [SerializeField] public string poolKey = "EnemyBullet";
+
     float[] rotations;
-    private const string EnemyBulletPoolKey = "EnemyBullet";
 
     private void Start()
     {
@@ -49,6 +54,30 @@ public class BulletSpawner : MonoBehaviour
 
         if (bulletPrefab == null)
             Debug.LogWarning("BulletSpawner: bulletPrefab not assigned.");
+
+        // Attempt to auto-assign poolKey from the assigned bulletPrefab if user didn't set it.
+        if ((string.IsNullOrEmpty(poolKey) || poolKey == "EnemyBullet") && bulletPrefab != null)
+        {
+            var prefabComp = bulletPrefab.GetComponent<EnemyBullet>();
+            if (prefabComp != null)
+            {
+                foreach (var kvp in ObjectPooler.poolLookup)
+                {
+                    // Compare the stored prefab component reference to the prefab's component.
+                    if (kvp.Value == prefabComp || kvp.Value.name == prefabComp.name)
+                    {
+                        poolKey = kvp.Key;
+                        Debug.Log($"BulletSpawner: auto-assigned poolKey '{poolKey}' for prefab '{bulletPrefab.name}'.");
+                        break;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(poolKey))
+                {
+                    Debug.LogWarning($"BulletSpawner: could not find a registered pool for prefab '{bulletPrefab.name}'. Set poolKey in inspector or register the prefab in GameManager.");
+                }
+            }
+        }
     }
 
     void Update()
@@ -95,12 +124,6 @@ public class BulletSpawner : MonoBehaviour
         {
             rotations[i] = minRotation + anglePerBullet * (i + 0.5f); // center of each slice
             rotations[i] = Mathf.Repeat(rotations[i], 360f);
-
-            // Old method, caused projectileoverlapping. Left here for future debugging.
-            //
-            //var fraction = (float)i / ((float)numBullets - 1);
-            //var difference = maxrotation - minRotation;
-            //rotations[i] = minRotation + fraction * difference;
         }
         return rotations;
     }
@@ -118,18 +141,26 @@ public class BulletSpawner : MonoBehaviour
         {
             EnemyBullet instance = null;
 
-            // Try get from pool
-            instance = ObjectPooler.DequeueObject<EnemyBullet>(EnemyBulletPoolKey);
+            // Try get from pool using the configured key
+            instance = ObjectPooler.DequeueObject<EnemyBullet>(poolKey);
+
+            if (instance == null)
+            {
+                Debug.LogWarning($"BulletSpawner: no pooled object available for key '{poolKey}'. Check GameManager.SetupPool and inspector settings.");
+                continue;
+            }
+
+            // Make sure instance knows its pool key (safeguard for instances created dynamically)
+            instance.pooledKey = poolKey;
 
             // Configure the bullet instance BEFORE activating
             instance.transform.position = transform.position;
 
             // Important: pass spawner rotation + per-bullet offset so direction is relative to spawner
             float spawnRotation = spawnerZ + rotations[i];
-            // keep angle normalized if you prefer:
-            // spawnRotation = Mathf.Repeat(spawnRotation, 360f);
 
-            instance.Initialize(spawnRotation, bulletSpeed, bulletVelocity, spawnedBulletLifetime);
+            // Pass poolKey so Initialize can also set pooledKey if needed
+            instance.Initialize(spawnRotation, bulletSpeed, bulletVelocity, spawnedBulletLifetime, poolKey);
 
             // Activate after configuration
             instance.gameObject.SetActive(true);

@@ -15,18 +15,25 @@ public class EnemyBullet : MonoBehaviour
     [SerializeField] public float lifetime = 20f;
     private float remainingLifetime;
 
+    // Pool key this instance belongs to. Set by pool setup or spawner when dequeued.
+    [HideInInspector] public string pooledKey = "EnemyBullet";
+
     private void OnEnable()
     {
         // Ensure lifetime is reset when enabled; rotation is applied in Initialize
         remainingLifetime = lifetime;
     }
         
-    public void Initialize(float rotationDeg, float speedValue, Vector2 velocityValue, float lifetimeValue)
+    // Accept an optional poolKey so spawners can mark instances with the correct pool.
+    public void Initialize(float rotationDeg, float speedValue, Vector2 velocityValue, float lifetimeValue, string poolKey = null)
     {
         rotation = rotationDeg;
         speed = speedValue;
         velocity = velocityValue;
         lifetime = lifetimeValue;
+
+        if (!string.IsNullOrEmpty(poolKey))
+            pooledKey = poolKey;
 
         // Apply rotation immediately so reused instances don't keep old rotation
         transform.rotation = Quaternion.Euler(0f, 0f, rotation);
@@ -56,7 +63,9 @@ public class EnemyBullet : MonoBehaviour
                 var go = Instantiate(childSpawner, transform.position, Quaternion.identity);
                 var sp = go.GetComponent<BulletSpawner>();
             }
-            ObjectPooler.EnqueueObject(this, "EnemyBullet");
+
+            // Return to pool using this instance's pool key (not a hardcoded string)
+            ObjectPooler.EnqueueObject(this, pooledKey);
         }
     }
     private void OnDisable()
